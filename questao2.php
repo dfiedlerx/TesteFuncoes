@@ -1,7 +1,8 @@
 <?php
 /*
 Irei simular uma tabela de banco de dados nesta classe com id, Modelo, Placa e Data de entrada
-Será possivel inserir, consultar, deletar, editar, e gerar relatorio completo do estacionamento
+Será possivel inserir, consultar, deletar, editar, e gerar relatorio completo do estacionamento. 
+Cada carro possui um id unico e sem repetição mesmo que seja apagado.
 */
 class Estacionamento {
 
@@ -49,6 +50,21 @@ class Estacionamento {
 	public function removeCarro ($idCarro) {
 		
 		unset ($this->vagasPreenchidas[$idCarro]);
+		
+	}
+	
+	//Se por acaso um dos termos for vazio, o metodo irá manter o valor antigo sem alterações
+	public function editarCarro ($idCarro, $modelo = '', $placa = '') {
+		
+		$this->vagasPreenchidas[$idCarro]['modelo'] = 
+			$modelo !== ''
+				? $modelo
+				: $this->vagasPreenchidas[$idCarro]['modelo'];
+		
+		$this->vagasPreenchidas[$idCarro]['placa'] = 
+			$placa !== ''
+				? $placa
+				: $this->vagasPreenchidas[$idCarro]['placa'];
 		
 	}
 	

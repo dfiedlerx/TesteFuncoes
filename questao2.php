@@ -43,6 +43,8 @@ class Estacionamento {
 			'dataEntrada' => date ('d/m/Y H:i:s')
 		];
 		
+		echo 'O Carro gerado pertence ao Id ' , $this->contadorId , '<br>';
+		
 		$this->contadorId += 1;
 		
 	}
@@ -50,6 +52,18 @@ class Estacionamento {
 	public function removeCarro ($idCarro) {
 		
 		unset ($this->vagasPreenchidas[$idCarro]);
+		
+	}
+	
+	public function selecionaCarro ($idCarro) {
+		
+		$this->relatorioCarroIndividual
+		(
+			$idCarro,
+			$this->vagasPreenchidas[$idCarro]['modelo'],
+			$this->vagasPreenchidas[$idCarro]['placa'],
+			$this->vagasPreenchidas[$idCarro]['dataEntrada']
+		);
 		
 	}
 	

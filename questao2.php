@@ -5,7 +5,6 @@ Será possivel inserir, consultar, deletar, editar, e gerar relatorio completo d
 Cada carro possui um id unico e sem repetição mesmo que seja apagado.
 */
 class Estacionamento {
-
 	private $quantidadeMaxima;
 	private $contadorId = 0;
 	
@@ -19,7 +18,7 @@ class Estacionamento {
 			data_entrada => '02/05/2019 05:05:05'
 		]
 	*/
-	private $vagasPreenchidas;
+	private $vagasPreenchidas = [];
 	
 	public function __construct ($quantidadeMaxima) {
 		
@@ -29,9 +28,10 @@ class Estacionamento {
 	
 	public function novoCarro ($modelo, $placa) {
 	
-		if (count($vagasPreenchidas) > $quantidadeMaxima) {
+		if (count($this->vagasPreenchidas) >= $this->quantidadeMaxima) {
 			
-			return 'Estacionamento Lotado.';
+			echo 'Estacionamento Lotado.<br><br>';
+			return;
 			
 		}
 		
@@ -43,7 +43,7 @@ class Estacionamento {
 			'dataEntrada' => date ('d/m/Y H:i:s')
 		];
 		
-		echo 'O Carro gerado pertence ao Id ' , $this->contadorId , '<br>';
+		echo 'O Carro gerado pertence ao Id ' , $this->contadorId , '<br><br>';
 		
 		$this->contadorId += 1;
 		
@@ -56,6 +56,12 @@ class Estacionamento {
 	}
 	
 	public function selecionaCarro ($idCarro) {
+			
+		if (!$this->verificaExistente($idCarro)) {
+		
+			return;
+			
+		}
 		
 		$this->relatorioCarroIndividual
 		(
@@ -67,8 +73,27 @@ class Estacionamento {
 		
 	}
 	
+	private function verificaExistente ($idCarro) {
+	
+		if (empty ($this->vagasPreenchidas[$idCarro])) {
+			
+			echo 'O id de carro selecionado não existe.<br><br>';
+			return false;
+			
+		}
+		
+		return true;
+		
+	}
+	
 	//Se por acaso um dos termos for vazio, o metodo irá manter o valor antigo sem alterações
 	public function editarCarro ($idCarro, $modelo = '', $placa = '') {
+		
+		if (!$this->verificaExistente($idCarro)) {
+		
+			return;
+			
+		}
 		
 		$this->vagasPreenchidas[$idCarro]['modelo'] = 
 			$modelo !== ''
@@ -88,6 +113,7 @@ class Estacionamento {
 	*/
 	public function relatorioDeCarros () {
 		
+		echo 'RELATORIO DE CARROS <br><br>';
 		echo 'Capacidade Máxima: ' , $this->quantidadeMaxima , '<br>';
 		echo 'Quantidade de Carros: ' , count($this->vagasPreenchidas) , '<br><br>';
 	
@@ -103,6 +129,8 @@ class Estacionamento {
 			
 		}
 		
+		echo '<br><br>';
+		
 	}
 	
 	//Como esse trecho é usado em duas ações da classe, tranformei-o em um metodo
@@ -116,3 +144,35 @@ class Estacionamento {
 	}
 	
 }
+
+// FIM DA CLASSSE //
+
+//--------DEBUG--------//
+//Criando estacionamento com 2 vagas
+$estacionamento = new Estacionamento (2);
+$estacionamento->relatorioDeCarros();
+
+//Adicionando 2 carros
+$estacionamento->novoCarro('Ford Fusion', 'WXY 2565');
+$estacionamento->relatorioDeCarros();
+$estacionamento->novoCarro('Ford Ka', 'WWY 2115');
+$estacionamento->relatorioDeCarros();
+
+
+//Testando se a classe impede ao gerar um novo carro com vagas lotadas
+$estacionamento->novoCarro('Honda Civic', 'KMW 1225');
+
+//Testando remoção de carros
+$estacionamento->removeCarro(1);
+$estacionamento->relatorioDeCarros();
+
+//Testando edição
+$estacionamento->editarCarro(0, 'Honda Civic', 'KMW 1225');
+$estacionamento->relatorioDeCarros();
+
+//Trazendo Carro individual
+$estacionamento->selecionaCarro(0);
+
+//Tentando Interagir com ids nao existentes
+$estacionamento->selecionaCarro(1);
+$estacionamento->editarCarro(1, 'Ford GT', 'AGH 4545');
